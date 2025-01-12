@@ -29,7 +29,7 @@ public class ProjectSecurityConfig {
     }
 
 
-    /**
+    /*
      * Provides a simple {@link UserDetailsService} that stores a user named "user" with the password "password"
      * and the role "USER". This is sufficient for testing the basic security features.
      *
@@ -56,7 +56,7 @@ public class ProjectSecurityConfig {
 
 
 
-    /**
+    /*
      * Provides a default {@link PasswordEncoder} bean.
      * This encoder uses a {@link DelegatingPasswordEncoder} that delegates encoding
      * to other encoders based on a prefix in the password.
