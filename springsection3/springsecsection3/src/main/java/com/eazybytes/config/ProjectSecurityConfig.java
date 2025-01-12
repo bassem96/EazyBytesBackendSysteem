@@ -2,6 +2,7 @@ package com.eazybytes.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.password.CompromisedPasswordChecker;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.User;
@@ -10,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.password.HaveIBeenPwnedRestApiPasswordChecker;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -53,9 +55,6 @@ public class ProjectSecurityConfig {
     }
 
 
-
-
-
     /*
      * Provides a default {@link PasswordEncoder} bean.
      * This encoder uses a {@link DelegatingPasswordEncoder} that delegates encoding
@@ -71,5 +70,14 @@ public class ProjectSecurityConfig {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
-
+    /**
+     * Provides a {@link CompromisedPasswordChecker} that delegates to the HaveIBeenPwned API to check if the
+     * password has been compromised before.
+     *
+     * @return a {@link CompromisedPasswordChecker} that checks if the password has been compromised.
+     */
+@Bean
+    public CompromisedPasswordChecker compromisedPasswordChecker() {
+        return new HaveIBeenPwnedRestApiPasswordChecker();
+    }
 }
