@@ -4,6 +4,7 @@ package com.eazybytes.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -12,13 +13,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile("!prod")
+@Profile("prod")
 @RequiredArgsConstructor
-public class EazyBankUsernamePwdAuthenticationProvider implements AuthenticationProvider {
+public class EazyBankProdUsernamePwdAuthenticationProvider implements AuthenticationProvider {
 
     private final EazyBankUserDetailsService eazyBankUserDetailsService;
     private final PasswordEncoder passwordEncoder;
-
     /**
      * @param authentication the authentication request object.
      * @return
@@ -29,9 +29,12 @@ public class EazyBankUsernamePwdAuthenticationProvider implements Authentication
         String username = authentication.getName();
         String password = authentication.getCredentials().toString();
         UserDetails userDetails = eazyBankUserDetailsService.loadUserByUsername(username);
-        //no checks for lower env (such as dev )
-        return new UsernamePasswordAuthenticationToken(username, password, userDetails.getAuthorities());
 
+        if (passwordEncoder.matches(password, userDetails.getPassword())) {
+            return new UsernamePasswordAuthenticationToken(username,password,userDetails.getAuthorities());
+        }else{
+            throw new BadCredentialsException("Invalid password");
+        }
 
     }
 
