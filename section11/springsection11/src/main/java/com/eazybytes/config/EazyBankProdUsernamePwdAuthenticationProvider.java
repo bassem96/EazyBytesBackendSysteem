@@ -9,6 +9,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -17,8 +18,9 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class EazyBankProdUsernamePwdAuthenticationProvider implements AuthenticationProvider {
 
-    private final EazyBankUserDetailsService eazyBankUserDetailsService;
+    private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
+
     /**
      * @param authentication the authentication request object.
      * @return
@@ -28,11 +30,11 @@ public class EazyBankProdUsernamePwdAuthenticationProvider implements Authentica
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String username = authentication.getName();
         String password = authentication.getCredentials().toString();
-        UserDetails userDetails = eazyBankUserDetailsService.loadUserByUsername(username);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
         if (passwordEncoder.matches(password, userDetails.getPassword())) {
-            return new UsernamePasswordAuthenticationToken(username,password,userDetails.getAuthorities());
-        }else{
+            return new UsernamePasswordAuthenticationToken(username, password, userDetails.getAuthorities());
+        } else {
             throw new BadCredentialsException("Invalid password");
         }
 

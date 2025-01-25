@@ -8,6 +8,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +17,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class EazyBankUsernamePwdAuthenticationProvider implements AuthenticationProvider {
 
-    private final EazyBankUserDetailsService eazyBankUserDetailsService;
+    private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
 
     /**
@@ -28,7 +29,7 @@ public class EazyBankUsernamePwdAuthenticationProvider implements Authentication
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String username = authentication.getName();
         String password = authentication.getCredentials().toString();
-        UserDetails userDetails = eazyBankUserDetailsService.loadUserByUsername(username);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
         //no checks for lower env (such as dev )
         return new UsernamePasswordAuthenticationToken(username, password, userDetails.getAuthorities());
 
